@@ -34,6 +34,7 @@ public class Coordinate {
 
     /**
      * Constructor initializing the Coordinate to a specific position.
+     *
      * @param x horizontal position
      * @param y vertical position
      * @param z depth position
@@ -47,6 +48,7 @@ public class Coordinate {
 
     /**
      * Default constructor. Position is initialized to(x, y, z) = (0.0, 0.0, 0.0).
+     *
      * @methodtype constructor
      */
     public Coordinate() {
@@ -88,6 +90,14 @@ public class Coordinate {
         } else {
             return false;
         }
+    }
+
+    /**
+     *
+     */
+    @Override
+    public int hashCode() {
+        return (int) (x + y + z);
     }
 
     /**
