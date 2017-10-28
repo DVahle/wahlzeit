@@ -71,6 +71,7 @@ public class CoordinateTest {
     public void testEquals() {
         //check evil parameters
         assertFalse(coordDefault.equals(null));
+        assertFalse(coordDefault.isEqual(null));
         assertFalse(coordDefault.equals(new Object()));
 
         //make coordinates equal with setters
@@ -78,11 +79,13 @@ public class CoordinateTest {
         coordFar.setX(coordClose.getX());
         coordFar.setY(coordClose.getY());
         coordFar.setZ(coordClose.getZ());
+        assertTrue(coordClose.isEqual(coordFar));
         assertTrue(coordClose.equals(coordFar));
         assertEquals(coordClose.hashCode(), coordFar.hashCode());
 
         //check one different value
         coordFar.setX(0.0);
+        assertFalse(coordClose.isEqual(coordFar));
         assertFalse(coordClose.equals(coordFar));
         coordFar.setX(coordClose.getX());
 
@@ -112,5 +115,8 @@ public class CoordinateTest {
         //check correct distance
         assertEquals(0.374166, coordDefault.getDistance(coordClose), 1E-4);
         assertEquals(3741.978105, coordClose.getDistance(coordFar), 1E-4);
+
+        //check invalid distance
+        assertEquals(Double.POSITIVE_INFINITY, coordDefault.getDistance(null), 0.0);
     }
 }

@@ -57,8 +57,12 @@ public class Coordinate {
 
     /**
      * Computes the direct distance between this coordinate and otherCoordinate.
+     * @return direct distance from this Coordinate to otherCoordinate. If otherCoordinate is null, +INFINITY is returned
      */
     protected double getDistance(Coordinate otherCoordinate) {
+        if (otherCoordinate == null) {
+            return Double.POSITIVE_INFINITY;
+        }
         final double deltaX = this.getX() - otherCoordinate.getX();
         final double deltaY = this.getY() - otherCoordinate.getY();
         final double deltaZ = this.getZ() - otherCoordinate.getZ();
@@ -71,6 +75,9 @@ public class Coordinate {
      * @return true if otherCoordinate has the same x, y and z position.
      */
     protected boolean isEqual(Coordinate otherCoordinate) {
+        if (otherCoordinate == null) {
+            return false;
+        }
         return (this.getX() == otherCoordinate.getX()) &&
                 (this.getY() == otherCoordinate.getY()) &&
                 (this.getZ() == otherCoordinate.getZ());
