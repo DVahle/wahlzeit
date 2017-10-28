@@ -20,8 +20,6 @@
 
 package org.wahlzeit.model;
 
-import com.sun.istack.internal.NotNull;
-
 /**
  * A location is related to a photo so one can tell where the image was taken
  */
@@ -29,13 +27,11 @@ public class Location {
     /**
      * Name of the location. Must not be null but can be empty.
      */
-    @NotNull
     private String name = "";
 
     /**
      * Coordinate of the location.
      */
-    @NotNull
     public Coordinate coordinate = new Coordinate();
 
     /**
