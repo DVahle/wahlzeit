@@ -79,6 +79,7 @@ public class CoordinateTest {
         coordFar.setY(coordClose.getY());
         coordFar.setZ(coordClose.getZ());
         assertTrue(coordClose.equals(coordFar));
+        assertEquals(coordClose.hashCode(), coordFar.hashCode());
 
         //check one different value
         coordFar.setX(0.0);
