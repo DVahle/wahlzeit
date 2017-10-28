@@ -57,9 +57,6 @@ public class Coordinate {
 
     /**
      * Computes the direct distance between this coordinate and otherCoordinate.
-     *
-     * @param otherCoordinate
-     * @return
      */
     protected double getDistance(Coordinate otherCoordinate) {
         final double deltaX = this.getX() - otherCoordinate.getX();
@@ -71,8 +68,7 @@ public class Coordinate {
     /**
      * Compares this Coordinate with otherCoordinate.
      *
-     * @param otherCoordinate
-     * @return true if otherCoordinate has the same x, y and z position
+     * @return true if otherCoordinate has the same x, y and z position.
      */
     protected boolean isEqual(Coordinate otherCoordinate) {
         return (this.getX() == otherCoordinate.getX()) &&
