@@ -57,6 +57,7 @@ public class Coordinate {
 
     /**
      * Computes the direct distance between this coordinate and otherCoordinate.
+     *
      * @return direct distance from this Coordinate to otherCoordinate. If otherCoordinate is null, +INFINITY is returned
      */
     protected double getDistance(Coordinate otherCoordinate) {
@@ -78,9 +79,21 @@ public class Coordinate {
         if (otherCoordinate == null) {
             return false;
         }
-        return (this.getX() == otherCoordinate.getX()) &&
-                (this.getY() == otherCoordinate.getY()) &&
-                (this.getZ() == otherCoordinate.getZ());
+
+        final double EPSILON = 10E-4;
+
+        return (isDoubleEqual(this.getX(), otherCoordinate.getX(), EPSILON)) &&
+                (isDoubleEqual(this.getY(), otherCoordinate.getY(), EPSILON)) &&
+                (isDoubleEqual(this.getZ(), otherCoordinate.getZ(), EPSILON));
+    }
+
+    /**
+     * compares two double values with epsilon tolerance
+     *
+     * @methodtype boolean-query
+     */
+    private boolean isDoubleEqual(double a, double b, double epsilon) {
+        return Math.abs(a - b) < epsilon;
     }
 
     /**
