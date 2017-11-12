@@ -35,6 +35,14 @@ public class Location {
     public Coordinate coordinate = new Coordinate();
 
     /**
+     * Default constructor sets default values
+     *
+     * @methodtype constructor
+     */
+    public Location() {
+    }
+
+    /**
      * This constructor only sets the name but uses a default coordinate
      *
      * @methodtype constructor

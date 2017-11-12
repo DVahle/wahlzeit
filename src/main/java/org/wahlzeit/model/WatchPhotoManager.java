@@ -20,28 +20,38 @@
 
 package org.wahlzeit.model;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.wahlzeit.model.persistence.PersistenceTestSuite;
+import java.util.logging.Logger;
+
+/**
+ * This class extends the PhotoManager class so it uses WatchPhotos instead of Photos
+ */
+public class WatchPhotoManager extends PhotoManager {
 
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        PersistenceTestSuite.class,
-        AccessRightsTest.class,
-        CoordinateTest.class,
-        FlagReasonTest.class,
-        GenderTest.class,
-        GuestTest.class,
-        LocationTest.class,
-        PhotoFilterTest.class,
-        TagsTest.class,
-        UserStatusTest.class,
-        ValueTest.class,
-        WatchPhotoTest.class,
-        WatchPhotoFactoryTest.class,
-        WatchPhotoManagerTest.class
-})
+    /**
+     * Logger for logging events
+     */
+    private static final Logger log = Logger.getLogger(WatchPhotoManager.class.getName());
 
-public class ModelTestSuite {
+
+    /**
+     *
+     */
+    @Override
+    public Photo getPhotoFromId(PhotoId id) {
+        if (id == null) {
+            return null;
+        }
+
+        Photo result = doGetPhotoFromId(id);
+
+        if (result == null) {
+            result = WatchPhotoFactory.getInstance().loadPhoto(id);
+            if (result != null) {
+                doAddPhoto(result);
+            }
+        }
+
+        return result;
+    }
 }
