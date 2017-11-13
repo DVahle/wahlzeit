@@ -32,7 +32,7 @@ public class Location {
     /**
      * Coordinate of the location.
      */
-    public Coordinate coordinate = new CartesianCoordinate();
+    public CartesianCoordinate coordinate = new CartesianCoordinate();
 
     /**
      * Default constructor sets default values
@@ -62,7 +62,7 @@ public class Location {
         checkName(name);
         checkCoordinate(coordinate);
         this.name = name;
-        this.coordinate = coordinate;
+        this.coordinate = coordinate.asCartesianCoordinate();
     }
 
     @Override
@@ -125,7 +125,7 @@ public class Location {
      */
     public void setCoordinate(Coordinate coordinate) {
         checkCoordinate(coordinate);
-        this.coordinate = coordinate;
+        this.coordinate = coordinate.asCartesianCoordinate();
     }
 
 
