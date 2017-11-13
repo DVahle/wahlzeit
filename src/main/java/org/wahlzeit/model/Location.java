@@ -32,7 +32,7 @@ public class Location {
     /**
      * Coordinate of the location.
      */
-    public Coordinate coordinate = new Coordinate();
+    public Coordinate coordinate = new CartesianCoordinate();
 
     /**
      * Default constructor sets default values

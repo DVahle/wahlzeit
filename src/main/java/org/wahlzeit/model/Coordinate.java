@@ -23,138 +23,31 @@ package org.wahlzeit.model;
 /**
  * A coordinate represents the position of a point in a 3D cartesian space.
  */
-public class Coordinate {
+public interface Coordinate {
 
     /**
-     * A coordinate is defined as a combination of a x, y and z value.
-     */
-    private double x = 0.0;
-    private double y = 0.0;
-    private double z = 0.0;
-
-    /**
-     * Constructor initializing the Coordinate to a specific position.
+     * Converts coordinates to cartesian coordinate system
      *
-     * @param x horizontal position
-     * @param y vertical position
-     * @param z depth position
-     * @methodtype constructor
+     * @methodtype conversion
      */
-    public Coordinate(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
+    public CartesianCoordinate asCartesianCoordinate();
 
     /**
-     * Default constructor. Position is initialized to(x, y, z) = (0.0, 0.0, 0.0).
+     * Converts coordinates to spheric coordinate system
      *
-     * @methodtype constructor
+     * @methodtype conversion
      */
-    public Coordinate() {
-
-    }
+    public SphericCoordinate asSphericCoordinate();
 
     /**
-     * Computes the direct distance between this coordinate and otherCoordinate.
-     *
-     * @return direct distance from this Coordinate to otherCoordinate. If otherCoordinate is null, +INFINITY is returned
-     */
-    protected double getDistance(Coordinate otherCoordinate) {
-        if (otherCoordinate == null) {
-            return Double.POSITIVE_INFINITY;
-        }
-        final double deltaX = this.getX() - otherCoordinate.getX();
-        final double deltaY = this.getY() - otherCoordinate.getY();
-        final double deltaZ = this.getZ() - otherCoordinate.getZ();
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-    }
-
-    /**
-     * Compares this Coordinate with otherCoordinate.
-     *
-     * @return true if otherCoordinate has the same x, y and z position.
-     */
-    protected boolean isEqual(Coordinate otherCoordinate) {
-        if (otherCoordinate == null) {
-            return false;
-        }
-
-        final double EPSILON = 10E-4;
-
-        return (isDoubleEqual(this.getX(), otherCoordinate.getX(), EPSILON)) &&
-                (isDoubleEqual(this.getY(), otherCoordinate.getY(), EPSILON)) &&
-                (isDoubleEqual(this.getZ(), otherCoordinate.getZ(), EPSILON));
-    }
-
-    /**
-     * compares two double values with epsilon tolerance
-     *
      * @methodtype boolean-query
      */
-    private boolean isDoubleEqual(double a, double b, double epsilon) {
-        return Math.abs(a - b) < epsilon;
-    }
+    public boolean isEqual(Coordinate coordinate);
 
     /**
+     * Computes the difference in cartesian coordinate system between this and coordinate
      *
+     * @methodtype query-method
      */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Coordinate) {
-            return isEqual((Coordinate) obj);
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     *
-     */
-    @Override
-    public int hashCode() {
-        return (int) (x + y + z);
-    }
-
-    /**
-     * @methodtype get
-     */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * @methodtype set
-     */
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    /**
-     * @methodtype get
-     */
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * @methodtype set
-     */
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    /**
-     * @methodtype get
-     */
-    public double getZ() {
-        return z;
-    }
-
-    /**
-     * @methodtype set
-     */
-    public void setZ(double z) {
-        this.z = z;
-    }
+    public double getDistance(Coordinate coordinate);
 }

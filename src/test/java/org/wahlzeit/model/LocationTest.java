@@ -34,8 +34,8 @@ public class LocationTest {
     @Before
     public void initLocations() {
         location1 = new Location("location1");
-        location2 = new Location("location2", new Coordinate());
-        location3 = new Location("location3", new Coordinate(1.0, 2.0, 3.0));
+        location2 = new Location("location2", new CartesianCoordinate());
+        location3 = new Location("location3", new CartesianCoordinate(1.0, 2.0, 3.0));
     }
 
     /**
@@ -52,9 +52,9 @@ public class LocationTest {
         assertEquals("location2", location2.getName());
         assertEquals("location3", location3.getName());
 
-        assertEquals(new Coordinate(), location1.getCoordinate());
-        assertEquals(new Coordinate(), location2.getCoordinate());
-        assertEquals(new Coordinate(1.0, 2.0, 3.0), location3.getCoordinate());
+        assertEquals(new CartesianCoordinate(), location1.getCoordinate());
+        assertEquals(new CartesianCoordinate(), location2.getCoordinate());
+        assertEquals(new CartesianCoordinate(1.0, 2.0, 3.0), location3.getCoordinate());
     }
 
     /**
@@ -89,7 +89,7 @@ public class LocationTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidConstructorNameParameter2() {
-        new Location(null, new Coordinate());
+        new Location(null, new CartesianCoordinate());
     }
 
     /**
