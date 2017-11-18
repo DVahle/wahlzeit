@@ -23,7 +23,7 @@ package org.wahlzeit.model;
 /**
  * This class represents a coordinate in cartesian space
  */
-public class CartesianCoordinate implements Coordinate {
+public class CartesianCoordinate extends AbstractCoordinate {
 
     /**
      * A coordinate is defined as a combination of a x, y and z value.
@@ -53,54 +53,6 @@ public class CartesianCoordinate implements Coordinate {
      */
     public CartesianCoordinate() {
 
-    }
-
-    /**
-     * Computes the distance in cartesian coordinate system between this and coordinate.
-     * This equals a call of getCartesianDistance.
-     * Returns +Infinity if coordinate is null
-     *
-     * @methodtype query-method
-     */
-    public double getDistance(Coordinate coordinate) {
-        return getCartesianDistance(coordinate);
-    }
-
-    /**
-     * Computes the distance in cartesian coordinate system between this and coordinate.
-     * Returns +Infinity if coordinate is null
-     *
-     * @methodtype query-method
-     */
-    @Override
-    public double getCartesianDistance(Coordinate coordinate) {
-        if (coordinate == null) {
-            return Double.POSITIVE_INFINITY;
-        }
-        CartesianCoordinate other = coordinate.asCartesianCoordinate();
-
-        final double deltaX = this.getX() - other.getX();
-        final double deltaY = this.getY() - other.getY();
-        final double deltaZ = this.getZ() - other.getZ();
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-    }
-
-    /**
-     * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
-     * Returns +Infinity if coordinate is null
-     *
-     * @methodtype query-method
-     */
-    @Override
-    public double getSphericDistance(Coordinate coordinate) {
-        if(coordinate == null) return Double.POSITIVE_INFINITY;
-        SphericCoordinate other = coordinate.asSphericCoordinate();
-        SphericCoordinate own = this.asSphericCoordinate();
-
-        double deltaAngle = Math.acos(Math.sin(own.getLatitude()) * Math.sin(other.getLatitude()) +
-                Math.cos(own.getLatitude()) * Math.cos(other.getLatitude()) * Math.cos(Math.abs(own.getLongitude() - other.getLongitude())));
-
-        return deltaAngle * Math.max(own.getRadius(), other.getRadius());
     }
 
     /**
@@ -149,27 +101,6 @@ public class CartesianCoordinate implements Coordinate {
         return (isDoubleEqual(this.getX(), other.getX(), EPSILON)) &&
                 (isDoubleEqual(this.getY(), other.getY(), EPSILON)) &&
                 (isDoubleEqual(this.getZ(), other.getZ(), EPSILON));
-    }
-
-    /**
-     * compares two double values with epsilon tolerance
-     *
-     * @methodtype boolean-query
-     */
-    private boolean isDoubleEqual(double a, double b, double epsilon) {
-        return Math.abs(a - b) < epsilon;
-    }
-
-    /**
-     *
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Coordinate) {
-            return isEqual((Coordinate) obj);
-        } else {
-            return false;
-        }
     }
 
     /**

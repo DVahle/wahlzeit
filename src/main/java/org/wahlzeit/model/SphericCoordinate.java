@@ -23,7 +23,7 @@ package org.wahlzeit.model;
 /**
  * This class holds a coordinate in spheric space
  */
-public class SphericCoordinate implements Coordinate {
+public class SphericCoordinate extends AbstractCoordinate {
 
     /**
      * distance to the origin must be > 0
@@ -110,70 +110,11 @@ public class SphericCoordinate implements Coordinate {
     }
 
     /**
-     * compares two double values with epsilon tolerance
-     *
-     * @methodtype boolean-query
-     */
-    private boolean isDoubleEqual(double a, double b, double epsilon) {
-        return Math.abs(a - b) < epsilon;
-    }
-
-    /**
-     *
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Coordinate) {
-            return isEqual((Coordinate) obj);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      *
      */
     @Override
     public int hashCode() {
         return (int) (radius + latitude + longitude);
-    }
-
-    /**
-     * Computes the distance in cartesian coordinate system between this and coordinate.
-     * This equals a call of getCartesianDistance.
-     * Returns +Infinity if coordinate is null
-     *
-     * @methodtype query-method
-     */
-    @Override
-    public double getDistance(Coordinate coordinate) {
-        //simply use the cartesian implementation for this
-        CartesianCoordinate a = this.asCartesianCoordinate();
-
-        return a.getDistance(coordinate);
-    }
-
-    /**
-     * Computes the distance in cartesian coordinate system between this and coordinate.
-     * Returns +Infinity if coordinate is null
-     *
-     * @methodtype query-method
-     */
-    @Override
-    public double getCartesianDistance(Coordinate coordinate) {
-        return this.asCartesianCoordinate().getCartesianDistance(coordinate);
-    }
-
-    /**
-     * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
-     * Returns +Infinity if coordinate is null
-     *
-     * @methodtype query-method
-     */
-    @Override
-    public double getSphericDistance(Coordinate coordinate) {
-        if(coordinate == null) return Double.POSITIVE_INFINITY;
-        return coordinate.asCartesianCoordinate().getSphericDistance(this);
     }
 
     /**
