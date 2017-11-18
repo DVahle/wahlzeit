@@ -56,15 +56,28 @@ public class CartesianCoordinate implements Coordinate {
     }
 
     /**
-     * Computes the direct distance between this coordinate and otherCoordinate.
+     * Computes the distance in cartesian coordinate system between this and coordinate.
+     * This equals a call of getCartesianDistance.
+     * Returns +Infinity if coordinate is null
      *
-     * @return direct distance from this Coordinate to otherCoordinate. If otherCoordinate is null, +INFINITY is returned
+     * @methodtype query-method
      */
-    public double getDistance(Coordinate otherCoordinate) {
-        if (otherCoordinate == null) {
+    public double getDistance(Coordinate coordinate) {
+        return getCartesianDistance(coordinate);
+    }
+
+    /**
+     * Computes the distance in cartesian coordinate system between this and coordinate.
+     * Returns +Infinity if coordinate is null
+     *
+     * @methodtype query-method
+     */
+    @Override
+    public double getCartesianDistance(Coordinate coordinate) {
+        if (coordinate == null) {
             return Double.POSITIVE_INFINITY;
         }
-        CartesianCoordinate other = otherCoordinate.asCartesianCoordinate();
+        CartesianCoordinate other = coordinate.asCartesianCoordinate();
 
         final double deltaX = this.getX() - other.getX();
         final double deltaY = this.getY() - other.getY();
@@ -72,11 +85,39 @@ public class CartesianCoordinate implements Coordinate {
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
+    /**
+     * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
+     * Returns +Infinity if coordinate is null
+     *
+     * @methodtype query-method
+     */
+    @Override
+    public double getSphericDistance(Coordinate coordinate) {
+        if(coordinate == null) return Double.POSITIVE_INFINITY;
+        SphericCoordinate other = coordinate.asSphericCoordinate();
+        SphericCoordinate own = this.asSphericCoordinate();
+
+        double deltaAngle = Math.acos(Math.sin(own.getLatitude()) * Math.sin(other.getLatitude()) +
+                Math.cos(own.getLatitude()) * Math.cos(other.getLatitude()) * Math.cos(Math.abs(own.getLongitude() - other.getLongitude())));
+
+        return deltaAngle * Math.max(own.getRadius(), other.getRadius());
+    }
+
+    /**
+     * Converts coordinates to cartesian coordinate system.
+     *
+     * @methodtype conversion
+     */
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
         return this;
     }
 
+    /**
+     * Converts coordinates to spheric coordinate system.
+     *
+     * @methodtype conversion
+     */
     @Override
     public SphericCoordinate asSphericCoordinate() {
         double radius = Math.sqrt(x * x + y * y + z * z);

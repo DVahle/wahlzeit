@@ -47,7 +47,7 @@ public class CoordinateTest {
         cartCoordFar = new CartesianCoordinate(1000, 2000, -3000);
 
         sphericCoordDefault = new SphericCoordinate();
-        sphericCoordClose = new SphericCoordinate(0.1, Math.PI/4, Math.PI);
+        sphericCoordClose = new SphericCoordinate(0.1, Math.PI / 4, Math.PI);
         sphericCoordFar = new SphericCoordinate(1000, 0.33, -1.2);
     }
 
@@ -83,7 +83,7 @@ public class CoordinateTest {
         assertEquals(0.0, sphericCoordDefault.getLongitude(), 0.0);
 
         assertEquals(0.1, sphericCoordClose.getRadius(), 0.0);
-        assertEquals(Math.PI/4, sphericCoordClose.getLatitude(), 0.0);
+        assertEquals(Math.PI / 4, sphericCoordClose.getLatitude(), 0.0);
         assertEquals(Math.PI, sphericCoordClose.getLongitude(), 0.0);
 
         assertEquals(1000, sphericCoordFar.getRadius(), 0.0);
@@ -168,7 +168,7 @@ public class CoordinateTest {
     }
 
     /**
-     *
+     * Since getDistance is the same as getCartesianDistance, this test covers both methods
      */
     @Test
     public void testGetDistance() {
@@ -203,16 +203,36 @@ public class CoordinateTest {
      *
      */
     @Test
+    public void testSphericDistance() {
+        //example from Wkipedia (https://de.wikipedia.org/wiki/Orthodrome)
+        final double earthRadius = 6370.0;  //km
+        SphericCoordinate berlin = new SphericCoordinate(earthRadius, (52.517) / 180.0 * Math.PI, ((13.40 + 180.0) / 360.0) * 2 * Math.PI - Math.PI);
+        SphericCoordinate tokio = new SphericCoordinate(earthRadius, (35.70) / 180.0 * Math.PI, ((139.767 + 180.0) / 360.0) * 2 * Math.PI - Math.PI);
+
+        double sphericDistance = berlin.getSphericDistance(tokio);
+        assertEquals(sphericDistance, 8918, 2.0);
+
+        CartesianCoordinate berlinCart = berlin.asCartesianCoordinate();
+        CartesianCoordinate tokioCart = tokio.asCartesianCoordinate();
+
+        assertEquals(sphericDistance, tokioCart.getSphericDistance(berlinCart), 2.0);
+        assertEquals(sphericDistance, tokioCart.getSphericDistance(berlin), 2.0);
+        assertEquals(sphericDistance, berlin.getSphericDistance(tokioCart), 2.0);
+
+        assertEquals(Double.POSITIVE_INFINITY, berlin.getSphericDistance(null), 0.0);
+        assertEquals(Double.POSITIVE_INFINITY, berlinCart.getSphericDistance(null), 0.0);
+    }
+
+    /**
+     *
+     */
+    @Test
     public void testCoordinateConversion() {
         assertEquals(cartCoordClose.asCartesianCoordinate(), cartCoordClose);
         assertEquals(sphericCoordClose.asSphericCoordinate(), sphericCoordClose);
 
         CartesianCoordinate coordinate = sphericCoordClose.asCartesianCoordinate();
-        System.out.println(coordinate.getX() + ", " + coordinate.getY() + ", " + coordinate.getZ());
-
-
         SphericCoordinate coordinate2 = sphericCoordClose.asCartesianCoordinate().asSphericCoordinate();
-        System.out.println(coordinate2.getRadius() + ", " + coordinate2.getLatitude() + ", " + coordinate2.getLongitude());
 
         assertEquals(cartCoordDefault.asSphericCoordinate().asCartesianCoordinate(), cartCoordDefault);
         assertEquals(cartCoordClose.asSphericCoordinate().asCartesianCoordinate(), cartCoordClose);

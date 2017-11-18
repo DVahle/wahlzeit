@@ -139,9 +139,11 @@ public class SphericCoordinate implements Coordinate {
     }
 
     /**
-     * Computes the direct distance between this coordinate and otherCoordinate.
+     * Computes the distance in cartesian coordinate system between this and coordinate.
+     * This equals a call of getCartesianDistance.
+     * Returns +Infinity if coordinate is null
      *
-     * @return direct distance from this Coordinate to otherCoordinate. If otherCoordinate is null, +INFINITY is returned
+     * @methodtype query-method
      */
     @Override
     public double getDistance(Coordinate coordinate) {
@@ -151,6 +153,28 @@ public class SphericCoordinate implements Coordinate {
         return a.getDistance(coordinate);
     }
 
+    /**
+     * Computes the distance in cartesian coordinate system between this and coordinate.
+     * Returns +Infinity if coordinate is null
+     *
+     * @methodtype query-method
+     */
+    @Override
+    public double getCartesianDistance(Coordinate coordinate) {
+        return this.asCartesianCoordinate().getCartesianDistance(coordinate);
+    }
+
+    /**
+     * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
+     * Returns +Infinity if coordinate is null
+     *
+     * @methodtype query-method
+     */
+    @Override
+    public double getSphericDistance(Coordinate coordinate) {
+        if(coordinate == null) return Double.POSITIVE_INFINITY;
+        return coordinate.asCartesianCoordinate().getSphericDistance(this);
+    }
 
     /**
      * @methodtype get

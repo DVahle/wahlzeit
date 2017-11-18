@@ -26,28 +26,47 @@ package org.wahlzeit.model;
 public interface Coordinate {
 
     /**
-     * Converts coordinates to cartesian coordinate system
+     * Converts coordinates to cartesian coordinate system.
      *
      * @methodtype conversion
      */
     public CartesianCoordinate asCartesianCoordinate();
 
     /**
-     * Converts coordinates to spheric coordinate system
+     * Converts coordinates to spheric coordinate system.
      *
      * @methodtype conversion
      */
     public SphericCoordinate asSphericCoordinate();
 
     /**
-     * @methodtype boolean-query
+     * @methodtype boolean-query.
      */
     public boolean isEqual(Coordinate coordinate);
 
     /**
-     * Computes the difference in cartesian coordinate system between this and coordinate
+     * Computes the distance in cartesian coordinate system between this and coordinate.
+     * This equals a call of getCartesianDistance.
+     * Returns +Infinity if coordinate is null
      *
      * @methodtype query-method
      */
     public double getDistance(Coordinate coordinate);
+
+    /**
+     * Computes the distance in cartesian coordinate system between this and coordinate.
+     * Returns +Infinity if coordinate is null
+     *
+     * @methodtype query-method
+     */
+    public double getCartesianDistance(Coordinate coordinate);
+
+
+    /**
+     * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
+     * Returns +Infinity if coordinate is null
+     *
+     * @methodtype query-method
+     */
+    public double getSphericDistance(Coordinate coordinate);
 }
