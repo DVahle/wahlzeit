@@ -160,14 +160,6 @@ public class CoordinateTest {
     }
 
     /**
-     *
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void testIllegalSphericCoordinates() {
-        new SphericCoordinate(-0.1, -0.1, Math.PI + 0.1);
-    }
-
-    /**
      * Since getDistance is the same as getCartesianDistance, this test covers both methods
      */
     @Test
@@ -193,10 +185,6 @@ public class CoordinateTest {
         assertEquals(3741.978105, cartCoordClose.getDistance(cartCoordFar), tolerance);
 
         assertEquals(sphericCoordFar.getRadius(), sphericCoordFar.getDistance(new SphericCoordinate()), tolerance);
-
-        //check invalid distance
-        assertEquals(Double.POSITIVE_INFINITY, cartCoordDefault.getDistance(null), 0.0);
-        assertEquals(Double.POSITIVE_INFINITY, sphericCoordDefault.getDistance(null), 0.0);
     }
 
     /**
@@ -218,9 +206,6 @@ public class CoordinateTest {
         assertEquals(sphericDistance, tokioCart.getSphericDistance(berlinCart), 2.0);
         assertEquals(sphericDistance, tokioCart.getSphericDistance(berlin), 2.0);
         assertEquals(sphericDistance, berlin.getSphericDistance(tokioCart), 2.0);
-
-        assertEquals(Double.POSITIVE_INFINITY, berlin.getSphericDistance(null), 0.0);
-        assertEquals(Double.POSITIVE_INFINITY, berlinCart.getSphericDistance(null), 0.0);
     }
 
     /**
@@ -230,9 +215,6 @@ public class CoordinateTest {
     public void testCoordinateConversion() {
         assertEquals(cartCoordClose.asCartesianCoordinate(), cartCoordClose);
         assertEquals(sphericCoordClose.asSphericCoordinate(), sphericCoordClose);
-
-        CartesianCoordinate coordinate = sphericCoordClose.asCartesianCoordinate();
-        SphericCoordinate coordinate2 = sphericCoordClose.asCartesianCoordinate().asSphericCoordinate();
 
         assertEquals(cartCoordDefault.asSphericCoordinate().asCartesianCoordinate(), cartCoordDefault);
         assertEquals(cartCoordClose.asSphericCoordinate().asCartesianCoordinate(), cartCoordClose);

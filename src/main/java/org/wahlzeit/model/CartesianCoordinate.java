@@ -41,9 +41,14 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @methodtype constructor
      */
     public CartesianCoordinate(double x, double y, double z) {
+        assertClassInvariant();
+        assertValidDouble(x);
+        assertValidDouble(y);
+        assertValidDouble(z);
         this.x = x;
         this.y = y;
         this.z = z;
+        assertClassInvariant();
     }
 
     /**
@@ -52,7 +57,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @methodtype constructor
      */
     public CartesianCoordinate() {
-
+        assertClassInvariant();
     }
 
     /**
@@ -62,6 +67,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      */
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
+        assertClassInvariant();
         return this;
     }
 
@@ -72,6 +78,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      */
     @Override
     public SphericCoordinate asSphericCoordinate() {
+        assertClassInvariant();
         double radius = Math.sqrt(x * x + y * y + z * z);
         if (radius == 0.0) {
             return new SphericCoordinate(0.0, 0.0, 0.0);
@@ -81,26 +88,33 @@ public class CartesianCoordinate extends AbstractCoordinate {
         //horizontal
         double longitude = Math.atan2(y, x);
 
-        return new SphericCoordinate(radius, latitude, longitude);
+        SphericCoordinate sphericCoordinate = new SphericCoordinate(radius, latitude, longitude);
+
+        //postcondition: reconverting the sphericCoordinate to a CartesianCoordinate should be equal to the original CartesianCoordinate
+        assert sphericCoordinate.asCartesianCoordinate().isEqual(this);
+        assertClassInvariant();
+        return sphericCoordinate;
     }
 
     /**
      * Compares this Coordinate with coordinate.
      *
-     * @return true if coordinate has the same position.
+     * @return true if coordinate has the same position. False if they differed or coordinate was null
      */
     public boolean isEqual(Coordinate coordinate) {
-        if (coordinate == null) {
-            return false;
-        }
+        assertClassInvariant();
+        if (coordinate == null) return false;
 
         CartesianCoordinate other = coordinate.asCartesianCoordinate();
 
         final double EPSILON = 10E-4;
 
-        return (isDoubleEqual(this.getX(), other.getX(), EPSILON)) &&
+        boolean result = (isDoubleEqual(this.getX(), other.getX(), EPSILON)) &&
                 (isDoubleEqual(this.getY(), other.getY(), EPSILON)) &&
                 (isDoubleEqual(this.getZ(), other.getZ(), EPSILON));
+
+        assertClassInvariant();
+        return result;
     }
 
     /**
@@ -108,6 +122,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      */
     @Override
     public int hashCode() {
+        assertClassInvariant();
         return (int) (x + y + z);
     }
 
@@ -122,7 +137,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @methodtype set
      */
     public void setX(double x) {
+        assertClassInvariant();
+        assertValidDouble(x);
         this.x = x;
+        assertClassInvariant();
     }
 
     /**
@@ -136,7 +154,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @methodtype set
      */
     public void setY(double y) {
+        assertClassInvariant();
+        assertValidDouble(y);
         this.y = y;
+        assertClassInvariant();
     }
 
     /**
@@ -150,6 +171,29 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @methodtype set
      */
     public void setZ(double z) {
+        assertClassInvariant();
+        assertValidDouble(z);
         this.z = z;
+        assertClassInvariant();
+    }
+
+    /**
+     * Double.NaN and Infinite are not allowed
+     *
+     * @methodtype assertion
+     */
+    protected void assertValidDouble(double x) {
+        assert !Double.isNaN(x) && !Double.isInfinite(x);
+    }
+
+    /**
+     * checks the class invariant
+     *
+     * @methodtype assertion
+     */
+    protected void assertClassInvariant() {
+        assertValidDouble(this.getX());
+        assertValidDouble(this.getY());
+        assertValidDouble(this.getZ());
     }
 }

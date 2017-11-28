@@ -11,21 +11,19 @@ public abstract class AbstractCoordinate implements Coordinate {
      * @methodtype query-method
      */
     public double getDistance(Coordinate coordinate) {
+        assertCoordinateNotNull(coordinate);
         return getCartesianDistance(coordinate);
     }
 
 
     /**
      * Computes the distance in cartesian coordinate system between this and coordinate.
-     * Returns +Infinity if coordinate is null
      *
      * @methodtype query-method
      */
     @Override
     public double getCartesianDistance(Coordinate coordinate) {
-        if (coordinate == null) {
-            return Double.POSITIVE_INFINITY;
-        }
+        assertCoordinateNotNull(coordinate);
         CartesianCoordinate own = this.asCartesianCoordinate();
         CartesianCoordinate other = coordinate.asCartesianCoordinate();
 
@@ -38,13 +36,13 @@ public abstract class AbstractCoordinate implements Coordinate {
 
     /**
      * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
-     * Returns +Infinity if coordinate is null
+     * Coordinate must not be null
      *
      * @methodtype query-method
      */
     @Override
     public double getSphericDistance(Coordinate coordinate) {
-        if (coordinate == null) return Double.POSITIVE_INFINITY;
+        assertCoordinateNotNull(coordinate);
         SphericCoordinate other = coordinate.asSphericCoordinate();
         SphericCoordinate own = this.asSphericCoordinate();
 
@@ -95,6 +93,13 @@ public abstract class AbstractCoordinate implements Coordinate {
      */
     protected boolean isDoubleEqual(double a, double b, double epsilon) {
         return Math.abs(a - b) < epsilon;
+    }
+
+    /**
+     * @methodtype assertion
+     */
+    protected void assertCoordinateNotNull(Coordinate coordinate) {
+        assert (coordinate != null) : "Parameter Coordinate must not be null!";
     }
 
 }
