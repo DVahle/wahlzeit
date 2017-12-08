@@ -55,9 +55,10 @@ public class Location {
     /**
      * This constructor
      *
+     * @throws ConversionException if coordinate can not be converted into Cartesian coordinate system
      * @methodtype constructor
      */
-    public Location(String name, Coordinate coordinate) {
+    public Location(String name, Coordinate coordinate) throws ConversionException {
         //parameter checks
         checkName(name);
         checkCoordinate(coordinate);
@@ -123,7 +124,7 @@ public class Location {
     /**
      * @methodtype set
      */
-    public void setCoordinate(Coordinate coordinate) {
+    public void setCoordinate(Coordinate coordinate) throws ConversionException {
         checkCoordinate(coordinate);
         this.coordinate = coordinate.asCartesianCoordinate();
     }

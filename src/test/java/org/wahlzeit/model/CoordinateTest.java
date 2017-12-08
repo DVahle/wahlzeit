@@ -95,7 +95,7 @@ public class CoordinateTest {
      *
      */
     @Test
-    public void testCartesianEquals() {
+    public void testCartesianEquals() throws ConversionException {
         //check evil parameters
         assertFalse(cartCoordDefault.equals(null));
         assertFalse(cartCoordDefault.isEqual(null));
@@ -129,7 +129,7 @@ public class CoordinateTest {
      *
      */
     @Test
-    public void testSphericEquals() {
+    public void testSphericEquals() throws ConversionException {
         //check evil parameters
         assertFalse(sphericCoordDefault.equals(null));
         assertFalse(sphericCoordDefault.isEqual(null));
@@ -163,7 +163,7 @@ public class CoordinateTest {
      * Since getDistance is the same as getCartesianDistance, this test covers both methods
      */
     @Test
-    public void testGetDistance() {
+    public void testGetDistance() throws ConversionException {
         //check distance to itself
         assertEquals(0.0, cartCoordDefault.getDistance(cartCoordDefault), 0.0);
         assertEquals(0.0, cartCoordClose.getDistance(cartCoordClose), 0.0);
@@ -191,7 +191,7 @@ public class CoordinateTest {
      *
      */
     @Test
-    public void testSphericDistance() {
+    public void testSphericDistance() throws ConversionException {
         //example from Wkipedia (https://de.wikipedia.org/wiki/Orthodrome)
         final double earthRadius = 6370.0;  //km
         SphericCoordinate berlin = new SphericCoordinate(earthRadius, (52.517) / 180.0 * Math.PI, ((13.40 + 180.0) / 360.0) * 2 * Math.PI - Math.PI);
@@ -212,7 +212,7 @@ public class CoordinateTest {
      *
      */
     @Test
-    public void testCoordinateConversion() {
+    public void testCoordinateConversion() throws ConversionException {
         assertEquals(cartCoordClose.asCartesianCoordinate(), cartCoordClose);
         assertEquals(sphericCoordClose.asSphericCoordinate(), sphericCoordClose);
 

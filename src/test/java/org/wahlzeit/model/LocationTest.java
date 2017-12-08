@@ -32,7 +32,7 @@ public class LocationTest {
     private Location location3;
 
     @Before
-    public void initLocations() {
+    public void initLocations() throws ConversionException {
         location1 = new Location("location1");
         location2 = new Location("location2", new CartesianCoordinate());
         location3 = new Location("location3", new CartesianCoordinate(1.0, 2.0, 3.0));
@@ -88,7 +88,7 @@ public class LocationTest {
      *
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidConstructorNameParameter2() {
+    public void testInvalidConstructorNameParameter2() throws ConversionException {
         new Location(null, new CartesianCoordinate());
     }
 
@@ -96,7 +96,7 @@ public class LocationTest {
      *
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidSetCoordinateParameter() {
+    public void testInvalidSetCoordinateParameter() throws ConversionException {
         location1.setCoordinate(null);
     }
 
@@ -104,7 +104,7 @@ public class LocationTest {
      *
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidConstructorCoordinateParameter() {
+    public void testInvalidConstructorCoordinateParameter() throws ConversionException {
         new Location("location4", null);
     }
 }
