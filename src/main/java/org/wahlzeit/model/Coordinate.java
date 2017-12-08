@@ -28,45 +28,51 @@ public interface Coordinate {
     /**
      * Converts coordinates to cartesian coordinate system.
      *
+     * @throws ConversionException if conversion leads to an invalid Coordinate
      * @methodtype conversion
      */
-    public CartesianCoordinate asCartesianCoordinate();
+    public CartesianCoordinate asCartesianCoordinate() throws ConversionException;
 
     /**
      * Converts coordinates to spheric coordinate system.
      *
+     * @throws ConversionException if conversion leads to an invalid Coordinate
      * @methodtype conversion
      */
-    public SphericCoordinate asSphericCoordinate();
+    public SphericCoordinate asSphericCoordinate() throws ConversionException;
 
     /**
+     * @throws ConversionException if coordinate can not be converted into the same coordinate space
      * @methodtype boolean-query.
      */
-    public boolean isEqual(Coordinate coordinate);
+    public boolean isEqual(Coordinate coordinate) throws ConversionException;
 
     /**
      * Computes the distance in cartesian coordinate system between this and coordinate.
      * This equals a call of getCartesianDistance.
      * Returns +Infinity if coordinate is null
      *
+     * @throws ConversionException if coordinate can not be converted into the same coordinate space
      * @methodtype query-method
      */
-    public double getDistance(Coordinate coordinate);
+    public double getDistance(Coordinate coordinate) throws ConversionException;
 
     /**
      * Computes the distance in cartesian coordinate system between this and coordinate.
      * Returns +Infinity if coordinate is null
      *
+     * @throws ConversionException if coordinate can not be converted into the same coordinate space
      * @methodtype query-method
      */
-    public double getCartesianDistance(Coordinate coordinate);
+    public double getCartesianDistance(Coordinate coordinate) throws ConversionException;
 
 
     /**
      * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
      * Returns +Infinity if coordinate is null
      *
+     * @throws ConversionException if coordinate can not be converted into the same coordinate space
      * @methodtype query-method
      */
-    public double getSphericDistance(Coordinate coordinate);
+    public double getSphericDistance(Coordinate coordinate) throws ConversionException;
 }

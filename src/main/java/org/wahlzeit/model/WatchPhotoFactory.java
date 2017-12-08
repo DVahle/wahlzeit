@@ -59,6 +59,7 @@ public class WatchPhotoFactory extends PhotoFactory {
     public static synchronized WatchPhotoFactory getInstance() {
         if (instance == null) {
             log.config(LogBuilder.createSystemMessage().addAction("setting generic WatchPhotoFactory").toString());
+
             setInstance(new WatchPhotoFactory());
         }
 
@@ -70,10 +71,6 @@ public class WatchPhotoFactory extends PhotoFactory {
      * Method to set the singleton instance of WatchPhotoFactory.
      */
     protected static synchronized void setInstance(WatchPhotoFactory watchPhotoFactory) {
-        if (instance != null) {
-            throw new IllegalStateException("attempt to initalize WatchPhotoFactory twice");
-        }
-
         instance = watchPhotoFactory;
     }
 

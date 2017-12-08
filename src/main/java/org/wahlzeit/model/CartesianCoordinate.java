@@ -38,9 +38,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @param x horizontal position
      * @param y vertical position
      * @param z depth position
+     * @throws IllegalArgumentException if x, y or z is either NaN or +-Infinity
+     * @throws AssertionError if class invariant was damaged
      * @methodtype constructor
      */
-    public CartesianCoordinate(double x, double y, double z) {
+    public CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
         assertClassInvariant();
         assertValidDouble(x);
         assertValidDouble(y);
@@ -54,6 +56,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
     /**
      * Default constructor. Position is initialized to(x, y, z) = (0.0, 0.0, 0.0).
      *
+     * @throws AssertionError if class invariant was damaged
      * @methodtype constructor
      */
     public CartesianCoordinate() {
@@ -63,6 +66,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
     /**
      * Converts coordinates to cartesian coordinate system.
      *
+     * @throws AssertionError if class invariant was damaged
      * @methodtype conversion
      */
     @Override
@@ -74,10 +78,12 @@ public class CartesianCoordinate extends AbstractCoordinate {
     /**
      * Converts coordinates to spheric coordinate system.
      *
+     * @throws ConversionException if the conversion leads to an invalid SphericCoordinate
+     * @throws AssertionError if class invariant was damaged
      * @methodtype conversion
      */
     @Override
-    public SphericCoordinate asSphericCoordinate() {
+    public SphericCoordinate asSphericCoordinate() throws ConversionException {
         assertClassInvariant();
         double radius = Math.sqrt(x * x + y * y + z * z);
         if (radius == 0.0) {
@@ -87,21 +93,26 @@ public class CartesianCoordinate extends AbstractCoordinate {
         double latitude = Math.acos(z / radius);
         //horizontal
         double longitude = Math.atan2(y, x);
+        try {
+            SphericCoordinate sphericCoordinate = new SphericCoordinate(radius, latitude, longitude);
 
-        SphericCoordinate sphericCoordinate = new SphericCoordinate(radius, latitude, longitude);
-
-        //postcondition: reconverting the sphericCoordinate to a CartesianCoordinate should be equal to the original CartesianCoordinate
-        assert sphericCoordinate.asCartesianCoordinate().isEqual(this);
-        assertClassInvariant();
-        return sphericCoordinate;
+            //postcondition: reconverting the sphericCoordinate to a CartesianCoordinate should be equal to the original CartesianCoordinate
+            assert sphericCoordinate.asCartesianCoordinate().isEqual(this);
+            assertClassInvariant();
+            return sphericCoordinate;
+        } catch (IllegalArgumentException | AssertionError error) {
+            throw new ConversionException("Could not convert CartesianCoordinate to SphericCoordinate", error);
+        }
     }
 
     /**
      * Compares this Coordinate with coordinate.
      *
+     * @throws ConversionException if coordinate can not be converted into CartesianCoordinate space
+     * @throws AssertionError if class invariant was damaged
      * @return true if coordinate has the same position. False if they differed or coordinate was null
      */
-    public boolean isEqual(Coordinate coordinate) {
+    public boolean isEqual(Coordinate coordinate) throws ConversionException{
         assertClassInvariant();
         if (coordinate == null) return false;
 
@@ -119,6 +130,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     /**
      *
+     * @throws AssertionError if class invariant was damaged
      */
     @Override
     public int hashCode() {
@@ -134,9 +146,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @throws IllegalArgumentException if x is either NaN or +-Infinity
+     * @throws AssertionError if class invariant was damaged
      * @methodtype set
      */
-    public void setX(double x) {
+    public void setX(double x) throws IllegalArgumentException{
         assertClassInvariant();
         assertValidDouble(x);
         this.x = x;
@@ -151,9 +165,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @throws IllegalArgumentException if y is either NaN or +-Infinity
+     * @throws AssertionError if class invariant was damaged
      * @methodtype set
      */
-    public void setY(double y) {
+    public void setY(double y) throws IllegalArgumentException{
         assertClassInvariant();
         assertValidDouble(y);
         this.y = y;
@@ -168,9 +184,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @throws IllegalArgumentException if z is either NaN or +-Infinity
+     * @throws AssertionError if class invariant was damaged
      * @methodtype set
      */
-    public void setZ(double z) {
+    public void setZ(double z) throws IllegalArgumentException{
         assertClassInvariant();
         assertValidDouble(z);
         this.z = z;
@@ -180,20 +198,28 @@ public class CartesianCoordinate extends AbstractCoordinate {
     /**
      * Double.NaN and Infinite are not allowed
      *
+     * @throws IllegalArgumentException if x is either NaN or +-Infinity
      * @methodtype assertion
      */
-    protected void assertValidDouble(double x) {
-        assert !Double.isNaN(x) && !Double.isInfinite(x);
+    protected void assertValidDouble(double x) throws IllegalArgumentException{
+        if (Double.isNaN(x) || Double.isInfinite(x)) {
+            throw new IllegalArgumentException("expected a valid double value but was " + x);
+        }
     }
 
     /**
      * checks the class invariant
      *
+     * @throws AssertionError if one of the state defining variables has an invalid double value
      * @methodtype assertion
      */
-    protected void assertClassInvariant() {
-        assertValidDouble(this.getX());
-        assertValidDouble(this.getY());
-        assertValidDouble(this.getZ());
+    protected void assertClassInvariant() throws AssertionError {
+        try {
+            assertValidDouble(this.getX());
+            assertValidDouble(this.getY());
+            assertValidDouble(this.getZ());
+        } catch (IllegalArgumentException iae) {
+            throw new AssertionError(iae.getMessage());
+        }
     }
 }

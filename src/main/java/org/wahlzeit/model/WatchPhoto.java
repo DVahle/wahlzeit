@@ -70,12 +70,14 @@ public class WatchPhoto extends Photo {
     }
 
     /**
+     * @throws IllegalArgumentException if wristBandMaterial is null
      * @methodtype set
      */
-    public void setWristBandMaterial(String wristBandMaterial) {
-        if (wristBandMaterial != null) {
-            this.wristBandMaterial = wristBandMaterial;
+    public void setWristBandMaterial(String wristBandMaterial) throws IllegalArgumentException {
+        if (wristBandMaterial == null) {
+            throw new IllegalArgumentException("wristBandMaterial must not be null");
         }
+        this.wristBandMaterial = wristBandMaterial;
     }
 
     /**
@@ -86,12 +88,14 @@ public class WatchPhoto extends Photo {
     }
 
     /**
+     * @throws IllegalArgumentException if housingMaterial is null
      * @methodtype set
      */
-    public void setHousingMaterial(String housingMaterial) {
-        if (housingMaterial != null) {
-            this.housingMaterial = housingMaterial;
+    public void setHousingMaterial(String housingMaterial) throws IllegalArgumentException {
+        if (housingMaterial == null) {
+            throw new IllegalArgumentException("housingMaterial must not be null");
         }
+        this.housingMaterial = housingMaterial;
     }
 
     /**
@@ -102,11 +106,13 @@ public class WatchPhoto extends Photo {
     }
 
     /**
+     * @throws IllegalArgumentException if brand is null
      * @methodtype set
      */
-    public void setBrand(String brand) {
-        if (brand != null) {
-            this.brand = brand;
+    public void setBrand(String brand) throws IllegalArgumentException {
+        if (brand == null) {
+            throw new IllegalArgumentException("brand must not be null");
         }
+        this.brand = brand;
     }
 }

@@ -8,9 +8,11 @@ public abstract class AbstractCoordinate implements Coordinate {
      * This equals a call of getCartesianDistance.
      * Returns +Infinity if coordinate is null
      *
+     * @throws ConversionException      if coordinates can not be converted into CartesianCoordinate space
+     * @throws IllegalArgumentException if coordinate is null
      * @methodtype query-method
      */
-    public double getDistance(Coordinate coordinate) {
+    public double getDistance(Coordinate coordinate) throws IllegalArgumentException, ConversionException {
         assertCoordinateNotNull(coordinate);
         return getCartesianDistance(coordinate);
     }
@@ -19,10 +21,12 @@ public abstract class AbstractCoordinate implements Coordinate {
     /**
      * Computes the distance in cartesian coordinate system between this and coordinate.
      *
+     * @throws ConversionException      if coordinates can not be converted into CartesianCoordinate space
+     * @throws IllegalArgumentException if coordinate is null
      * @methodtype query-method
      */
     @Override
-    public double getCartesianDistance(Coordinate coordinate) {
+    public double getCartesianDistance(Coordinate coordinate) throws IllegalArgumentException, ConversionException {
         assertCoordinateNotNull(coordinate);
         CartesianCoordinate own = this.asCartesianCoordinate();
         CartesianCoordinate other = coordinate.asCartesianCoordinate();
@@ -38,10 +42,12 @@ public abstract class AbstractCoordinate implements Coordinate {
      * Computes the distance around a sphere between two points on that sphere. If the radius differs, the bigger radius is used.
      * Coordinate must not be null
      *
+     * @throws ConversionException      if coordinates can not be converted into SphericCoordinate space
+     * @throws IllegalArgumentException if coordinate is null
      * @methodtype query-method
      */
     @Override
-    public double getSphericDistance(Coordinate coordinate) {
+    public double getSphericDistance(Coordinate coordinate) throws IllegalArgumentException, ConversionException {
         assertCoordinateNotNull(coordinate);
         SphericCoordinate other = coordinate.asSphericCoordinate();
         SphericCoordinate own = this.asSphericCoordinate();
@@ -57,8 +63,9 @@ public abstract class AbstractCoordinate implements Coordinate {
      * This is a default implementation using CartesianCoordinate
      *
      * @return true if coordinate has the same position.
+     * @throws ConversionException if coordinate or this can not be converted into required coordinate space
      */
-    public boolean isEqual(Coordinate coordinate) {
+    public boolean isEqual(Coordinate coordinate) throws ConversionException {
         if (coordinate == null) {
             return false;
         }
@@ -79,7 +86,15 @@ public abstract class AbstractCoordinate implements Coordinate {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Coordinate) {
-            return isEqual((Coordinate) obj);
+            try {
+                return isEqual((Coordinate) obj);
+            } catch (IllegalStateException ise) {
+                ise.printStackTrace();
+                return false;
+            } catch (ConversionException e) {
+                e.printStackTrace();
+                return false;
+            }
         } else {
             return false;
         }
@@ -96,10 +111,13 @@ public abstract class AbstractCoordinate implements Coordinate {
     }
 
     /**
+     * @throws IllegalArgumentException if coordinate is null
      * @methodtype assertion
      */
-    protected void assertCoordinateNotNull(Coordinate coordinate) {
-        assert (coordinate != null) : "Parameter Coordinate must not be null!";
+    protected void assertCoordinateNotNull(Coordinate coordinate) throws IllegalArgumentException {
+        if (coordinate == null) {
+            throw new IllegalArgumentException("Parameter coordinate must not be null!");
+        }
     }
 
 }

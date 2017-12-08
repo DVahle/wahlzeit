@@ -20,6 +20,8 @@
 
 package org.wahlzeit.model;
 
+import java.nio.channels.ConnectionPendingException;
+
 /**
  * This class holds a coordinate in spheric space
  */
@@ -44,10 +46,11 @@ public class SphericCoordinate extends AbstractCoordinate {
      * @param radius    distance to origin
      * @param latitude  vertical angle between 0 and PI
      * @param longitude horizontal angle between -PI and +PI
+     * @throws IllegalArgumentException if one of the arguments ignores the contracts
+     * @throws AssertionError if class invariant was damaged
      * @methodtype constructor
      */
-    public SphericCoordinate(double radius, double latitude, double longitude) {
-        assertClassInvariant();
+    public SphericCoordinate(double radius, double latitude, double longitude) throws IllegalArgumentException {
         assertPositiveRadius(radius);
         assertCorrectLatitude(latitude);
         assertCorrectLongitude(longitude);
@@ -60,6 +63,7 @@ public class SphericCoordinate extends AbstractCoordinate {
     /**
      * Default constructor. Position is initialized to(x, y, z) = (0.0, 0.0, 0.0).
      *
+     * @throws AssertionError if class invariant was damaged
      * @methodtype constructor
      */
     public SphericCoordinate() {
@@ -69,28 +73,35 @@ public class SphericCoordinate extends AbstractCoordinate {
     /**
      * Converts this object into cartesian coordinate system
      *
+     * @throws ConversionException if conversion leads to an invalid CartesianCoordinate
+     * @throws AssertionError if class invariant was damaged
      * @methodtype conversion
      */
     @Override
-    public CartesianCoordinate asCartesianCoordinate() {
+    public CartesianCoordinate asCartesianCoordinate() throws ConversionException {
         assertClassInvariant();
 
         double x = radius * Math.sin(latitude) * Math.cos(longitude);
         double y = radius * Math.sin(latitude) * Math.sin(longitude);
         double z = radius * Math.cos(latitude);
 
-        CartesianCoordinate cartesianCoordinate = new CartesianCoordinate(x, y, z);
+        try {
+            CartesianCoordinate cartesianCoordinate = new CartesianCoordinate(x, y, z);
 
-        //postcondition: reconverting the cartesianCoordinate to a SphericCoordinate should be equal to the original SphericCoordinate
-        //can not use both postconditions in SpericCoordinate.asCartesianCoordinate and CartesianCoordinate.asSphericCoordinate due to endless recursion
-        //assert cartesianCoordinate.asSphericCoordinate().isEqual(this);
-        assertClassInvariant();
-        return cartesianCoordinate;
+            //postcondition: reconverting the cartesianCoordinate to a SphericCoordinate should be equal to the original SphericCoordinate
+            //can not use both postconditions in SpericCoordinate.asCartesianCoordinate and CartesianCoordinate.asSphericCoordinate due to endless recursion
+            //assert cartesianCoordinate.asSphericCoordinate().isEqual(this);
+            assertClassInvariant();
+            return cartesianCoordinate;
+        } catch (IllegalArgumentException | AssertionError error) {
+            throw new ConversionException("Could not convert SphericCoordinate to CartesianCoordinate", error);
+        }
     }
 
     /**
      * Returns this object. A conversion is not necessary
      *
+     * @throws AssertionError if class invariant was damaged
      * @methodtype conversion
      */
     @Override
@@ -102,10 +113,12 @@ public class SphericCoordinate extends AbstractCoordinate {
     /**
      * Compares this Coordinate with otherCoordinate.
      *
+     * @throws ConversionException if coordinate can not be converted into a SphericCoordinate
+     * @throws AssertionError if class invariant was damaged
      * @return true if otherCoordinate has the same position.
      */
     @Override
-    public boolean isEqual(Coordinate coordinate) {
+    public boolean isEqual(Coordinate coordinate) throws ConversionException{
         assertClassInvariant();
 
         if (coordinate == null) {
@@ -124,6 +137,7 @@ public class SphericCoordinate extends AbstractCoordinate {
 
     /**
      *
+     * @throws AssertionError if class invariant was damaged
      */
     @Override
     public int hashCode() {
@@ -139,6 +153,8 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @throws IllegalArgumentException if radius < 0
+     * @throws AssertionError if class invariant was damaged
      * @methodtype set
      */
     public void setRadius(double radius) {
@@ -156,6 +172,8 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @throws IllegalArgumentException if latitude < 0 or latitude > +Math.PI
+     * @throws AssertionError if class invariant was damaged
      * @methodtype set
      */
     public void setLatitude(double latitude) {
@@ -173,7 +191,9 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
-     * @methodtype set horizontal angle between -PI and +PI
+     * @throws IllegalArgumentException if longitude is not in range from -PI to +PI
+     * @throws AssertionError if class invariant was damaged
+     * @methodtype set horizontal angle
      */
     public void setLongitude(double longitude) {
         assertClassInvariant();
@@ -183,34 +203,48 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @throws IllegalArgumentException if radius < 0
      * @methodtype assertion
      */
     protected void assertPositiveRadius(double radius) {
-        assert !(radius < 0) : "Radius must not be < 0!";
+        if (radius < 0) {
+            throw new IllegalArgumentException("Radius must not be < 0 but was " + radius);
+        }
     }
 
     /**
+     * @throws IllegalArgumentException if latitude < 0 or latitude > +Math.PI
      * @methodtype assertion
      */
     protected void assertCorrectLatitude(double latitude) {
-        assert !(latitude < 0 || latitude > +Math.PI) : "Latitude must be between 0 and +PI!";
+        if (latitude < 0 || latitude > +Math.PI) {
+            throw new IllegalArgumentException("Latitude must be between 0 and +PI but was " + latitude);
+        }
     }
 
     /**
+     * @throws IllegalArgumentException if longitude < -Math.PI or longitude > +Math.PI
      * @methodtype assertion
      */
     protected void assertCorrectLongitude(double longitude) {
-        assert !(longitude < -Math.PI || longitude > +Math.PI) : "Longitude must be between -PI and +PI!";
+        if (longitude < -Math.PI || longitude > +Math.PI) {
+            throw new IllegalArgumentException("Longitude must be between -PI and +PI but was " + longitude);
+        }
     }
 
     /**
      * Checks the class invariant
      *
+     * @throws AssertionError if any of the state defining variables is in an invalid range
      * @methodtype assertion
      */
     protected void assertClassInvariant() {
-        assertPositiveRadius(this.getRadius());
-        assertCorrectLatitude(this.getLatitude());
-        assertCorrectLongitude(this.getLongitude());
+        try {
+            assertPositiveRadius(this.getRadius());
+            assertCorrectLatitude(this.getLatitude());
+            assertCorrectLongitude(this.getLongitude());
+        } catch (IllegalArgumentException iae) {
+            throw new AssertionError(iae.getMessage());
+        }
     }
 }

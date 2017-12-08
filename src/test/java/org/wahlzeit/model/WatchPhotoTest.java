@@ -73,19 +73,21 @@ public class WatchPhotoTest {
         assertEquals(photo1.getWristBandMaterial(), "Leather");
     }
 
-    @Test
-    public void testEvilParameters() {
-        //all variables should never be null, so setting it to null should not change it
+    @Test(expected = IllegalArgumentException.class)
+    public void testEvilParametersBrand() {
         photo1.setBrand("Diesel");
         photo1.setBrand(null);
-        assertEquals(photo1.getBrand(), "Diesel");
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testEvilParametersHousingMaterial() {
         photo2.setHousingMaterial(null);
-        assertEquals(photo2.getHousingMaterial(), "");
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testEvilParametersWristBandMaterial() {
         photo3.setWristBandMaterial("Leather");
         photo3.setWristBandMaterial(null);
-        assertEquals(photo3.getWristBandMaterial(), "Leather");
     }
 
 }
