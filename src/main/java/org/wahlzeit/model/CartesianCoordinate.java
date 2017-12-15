@@ -20,17 +20,46 @@
 
 package org.wahlzeit.model;
 
+import java.util.HashMap;
+import java.util.Objects;
+
 /**
- * This class represents a coordinate in cartesian space
+ * This class represents a coordinate in cartesian space.
+ * CartesianCoordinate is a shared value object.
  */
 public class CartesianCoordinate extends AbstractCoordinate {
 
     /**
+     * Shared object memory, stores all AbstractCoordinate value objects, so they can be reused
+     */
+    static private final HashMap<CartesianCoordinate, CartesianCoordinate> allSharedCoordinates = new HashMap<>();
+
+    /**
+     * Exchanges a temporarily created value Object with an equal shared value object.
+     * This method is thread safe.
+     *
+     * @param newTmpObject value object that was created and should be exchanged for equal shared value object
+     * @return the reference to the shared value object that is equal to newTmpObject
+     */
+    static protected CartesianCoordinate getSharedObject(CartesianCoordinate newTmpObject) {
+        synchronized (allSharedCoordinates) {
+            CartesianCoordinate mappedValue = allSharedCoordinates.get(newTmpObject);
+            //there was no equal object before
+            if (mappedValue == null) {
+                allSharedCoordinates.put(newTmpObject, newTmpObject);
+                return newTmpObject;
+            } else {
+                return mappedValue;
+            }
+        }
+    }
+
+    /**
      * A coordinate is defined as a combination of a x, y and z value.
      */
-    private double x = 0.0;
-    private double y = 0.0;
-    private double z = 0.0;
+    private final double x;
+    private final double y;
+    private final double z;
 
     /**
      * Constructor initializing the Coordinate to a specific position.
@@ -39,11 +68,10 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @param y vertical position
      * @param z depth position
      * @throws IllegalArgumentException if x, y or z is either NaN or +-Infinity
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype constructor
      */
-    public CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
-        assertClassInvariant();
+    private CartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
         assertValidDouble(x);
         assertValidDouble(y);
         assertValidDouble(z);
@@ -59,8 +87,33 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @throws AssertionError if class invariant was damaged
      * @methodtype constructor
      */
-    public CartesianCoordinate() {
-        assertClassInvariant();
+    private CartesianCoordinate() {
+        this(0.0, 0.0, 0.0);
+    }
+
+    /**
+     * Creation method returning the shared value object to a specific cartesian position.
+     *
+     * @param x horizontal position
+     * @param y vertical position
+     * @param z depth position
+     * @throws IllegalArgumentException if x, y or z is either NaN or +-Infinity
+     * @throws AssertionError           if class invariant was damaged
+     * @methodtype creation
+     */
+    static public CartesianCoordinate getCartesianCoordinate(double x, double y, double z) throws IllegalArgumentException {
+        CartesianCoordinate tmpObject = new CartesianCoordinate(x, y, z);
+        return getSharedObject(tmpObject).asCartesianCoordinate();
+    }
+
+    /**
+     * Creation method returning the default CartesianCoordinate object. Position is set to (x, y, z) = (0.0, 0.0, 0.0).
+     *
+     * @throws AssertionError if class invariant was damaged
+     * @methodtype creation
+     */
+    static public CartesianCoordinate getCartesianCoordinate() {
+        return getCartesianCoordinate(0.0, 0.0, 0.0);
     }
 
     /**
@@ -79,7 +132,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * Converts coordinates to spheric coordinate system.
      *
      * @throws ConversionException if the conversion leads to an invalid SphericCoordinate
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError      if class invariant was damaged
      * @methodtype conversion
      */
     @Override
@@ -87,14 +140,14 @@ public class CartesianCoordinate extends AbstractCoordinate {
         assertClassInvariant();
         double radius = Math.sqrt(x * x + y * y + z * z);
         if (radius == 0.0) {
-            return new SphericCoordinate(0.0, 0.0, 0.0);
+            return SphericCoordinate.getSphericCoordinate(0.0, 0.0, 0.0);
         }
         //vertical
         double latitude = Math.acos(z / radius);
         //horizontal
         double longitude = Math.atan2(y, x);
         try {
-            SphericCoordinate sphericCoordinate = new SphericCoordinate(radius, latitude, longitude);
+            SphericCoordinate sphericCoordinate = SphericCoordinate.getSphericCoordinate(radius, latitude, longitude);
 
             //postcondition: reconverting the sphericCoordinate to a CartesianCoordinate should be equal to the original CartesianCoordinate
             assert sphericCoordinate.asCartesianCoordinate().isEqual(this);
@@ -108,11 +161,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
     /**
      * Compares this Coordinate with coordinate.
      *
-     * @throws ConversionException if coordinate can not be converted into CartesianCoordinate space
-     * @throws AssertionError if class invariant was damaged
      * @return true if coordinate has the same position. False if they differed or coordinate was null
+     * @throws ConversionException if coordinate can not be converted into CartesianCoordinate space
+     * @throws AssertionError      if class invariant was damaged
      */
-    public boolean isEqual(Coordinate coordinate) throws ConversionException{
+    public boolean isEqual(Coordinate coordinate) throws ConversionException {
         assertClassInvariant();
         if (coordinate == null) return false;
 
@@ -129,13 +182,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
-     *
      * @throws AssertionError if class invariant was damaged
      */
     @Override
     public int hashCode() {
-        assertClassInvariant();
-        return (int) (x + y + z);
+        return Objects.hash(getX(), getY(), getZ());
     }
 
     /**
@@ -146,15 +197,15 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @return a new shared value object with new x but old y and z position
      * @throws IllegalArgumentException if x is either NaN or +-Infinity
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype set
      */
-    public void setX(double x) throws IllegalArgumentException{
+    public CartesianCoordinate setX(double x) throws IllegalArgumentException {
         assertClassInvariant();
         assertValidDouble(x);
-        this.x = x;
-        assertClassInvariant();
+        return getCartesianCoordinate(x, getY(), getZ());
     }
 
     /**
@@ -165,15 +216,15 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @return a new shared value object with new y but old x and z position
      * @throws IllegalArgumentException if y is either NaN or +-Infinity
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype set
      */
-    public void setY(double y) throws IllegalArgumentException{
+    public CartesianCoordinate setY(double y) throws IllegalArgumentException {
         assertClassInvariant();
         assertValidDouble(y);
-        this.y = y;
-        assertClassInvariant();
+        return getCartesianCoordinate(getX(), y, getZ());
     }
 
     /**
@@ -184,15 +235,28 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @return a new shared value object with new z but old x and y position
      * @throws IllegalArgumentException if z is either NaN or +-Infinity
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype set
      */
-    public void setZ(double z) throws IllegalArgumentException{
+    public CartesianCoordinate setZ(double z) throws IllegalArgumentException {
         assertClassInvariant();
         assertValidDouble(z);
-        this.z = z;
-        assertClassInvariant();
+        return getCartesianCoordinate(getX(), getY(), z);
+    }
+
+    /**
+     * Removes this object from the shared object memory.
+     * Therefor call this method to clear memory from this object in case this value object will never be used again.
+     * This method is thread safe.
+     *
+     * @return whether this object has been removed successfully
+     */
+    public boolean dispose() {
+        synchronized (allSharedCoordinates) {
+            return allSharedCoordinates.remove(this) == null;
+        }
     }
 
     /**
@@ -201,7 +265,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
      * @throws IllegalArgumentException if x is either NaN or +-Infinity
      * @methodtype assertion
      */
-    protected void assertValidDouble(double x) throws IllegalArgumentException{
+    protected void assertValidDouble(double x) throws IllegalArgumentException {
         if (Double.isNaN(x) || Double.isInfinite(x)) {
             throw new IllegalArgumentException("expected a valid double value but was " + x);
         }

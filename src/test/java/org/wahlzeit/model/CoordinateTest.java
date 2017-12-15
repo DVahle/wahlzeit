@@ -42,13 +42,13 @@ public class CoordinateTest {
 
     @Before
     public void initCoordinates() {
-        cartCoordDefault = new CartesianCoordinate();
-        cartCoordClose = new CartesianCoordinate(0.1, -0.2, 0.3);
-        cartCoordFar = new CartesianCoordinate(1000, 2000, -3000);
+        cartCoordDefault = CartesianCoordinate.getCartesianCoordinate();
+        cartCoordClose = CartesianCoordinate.getCartesianCoordinate(0.1, -0.2, 0.3);
+        cartCoordFar = CartesianCoordinate.getCartesianCoordinate(1000, 2000, -3000);
 
-        sphericCoordDefault = new SphericCoordinate();
-        sphericCoordClose = new SphericCoordinate(0.1, Math.PI / 4, Math.PI);
-        sphericCoordFar = new SphericCoordinate(1000, 0.33, -1.2);
+        sphericCoordDefault = SphericCoordinate.getSphericCoordinate();
+        sphericCoordClose = SphericCoordinate.getSphericCoordinate(0.1, Math.PI / 4, Math.PI);
+        sphericCoordFar = SphericCoordinate.getSphericCoordinate(1000, 0.33, -1.2);
     }
 
     /**
@@ -103,26 +103,26 @@ public class CoordinateTest {
 
         //make coordinates equal with setters
         assertFalse(cartCoordClose.equals(cartCoordFar));
-        cartCoordFar.setX(cartCoordClose.getX());
-        cartCoordFar.setY(cartCoordClose.getY());
-        cartCoordFar.setZ(cartCoordClose.getZ());
+        cartCoordFar = cartCoordFar.setX(cartCoordClose.getX());
+        cartCoordFar = cartCoordFar.setY(cartCoordClose.getY());
+        cartCoordFar = cartCoordFar.setZ(cartCoordClose.getZ());
         assertTrue(cartCoordClose.isEqual(cartCoordFar));
         assertTrue(cartCoordClose.equals(cartCoordFar));
         assertEquals(cartCoordClose.hashCode(), cartCoordFar.hashCode());
 
         //check one different value
-        cartCoordFar.setX(0.0);
+        cartCoordFar = cartCoordFar.setX(0.0);
         assertFalse(cartCoordClose.isEqual(cartCoordFar));
         assertFalse(cartCoordClose.equals(cartCoordFar));
-        cartCoordFar.setX(cartCoordClose.getX());
+        cartCoordFar = cartCoordFar.setX(cartCoordClose.getX());
 
-        cartCoordFar.setY(0.0);
+        cartCoordFar = cartCoordFar.setY(0.0);
         assertFalse(cartCoordClose.equals(cartCoordFar));
-        cartCoordFar.setX(cartCoordClose.getY());
+        cartCoordFar = cartCoordFar.setX(cartCoordClose.getY());
 
-        cartCoordFar.setZ(0.0);
+        cartCoordFar = cartCoordFar.setZ(0.0);
         assertFalse(cartCoordClose.equals(cartCoordFar));
-        cartCoordFar.setZ(cartCoordClose.getZ());
+        cartCoordFar = cartCoordFar.setZ(cartCoordClose.getZ());
     }
 
     /**
@@ -137,26 +137,26 @@ public class CoordinateTest {
 
         //make coordinates equal with setters
         assertFalse(sphericCoordClose.equals(sphericCoordFar));
-        sphericCoordFar.setRadius(sphericCoordClose.getRadius());
-        sphericCoordFar.setLatitude(sphericCoordClose.getLatitude());
-        sphericCoordFar.setLongitude(sphericCoordClose.getLongitude());
+        sphericCoordFar = sphericCoordFar.setRadius(sphericCoordClose.getRadius());
+        sphericCoordFar = sphericCoordFar.setLatitude(sphericCoordClose.getLatitude());
+        sphericCoordFar = sphericCoordFar.setLongitude(sphericCoordClose.getLongitude());
         assertTrue(sphericCoordClose.isEqual(sphericCoordFar));
         assertTrue(sphericCoordClose.equals(sphericCoordFar));
         assertEquals(sphericCoordClose.hashCode(), sphericCoordFar.hashCode());
 
         //check one different value
-        sphericCoordFar.setRadius(0.0);
+        sphericCoordFar = sphericCoordFar.setRadius(0.0);
         assertFalse(sphericCoordClose.isEqual(sphericCoordFar));
         assertFalse(sphericCoordClose.equals(sphericCoordFar));
-        sphericCoordFar.setRadius(sphericCoordClose.getRadius());
+        sphericCoordFar = sphericCoordFar.setRadius(sphericCoordClose.getRadius());
 
-        sphericCoordFar.setLatitude(0.0);
+        sphericCoordFar = sphericCoordFar.setLatitude(0.0);
         assertFalse(sphericCoordClose.equals(sphericCoordFar));
-        sphericCoordFar.setLatitude(sphericCoordClose.getLatitude());
+        sphericCoordFar = sphericCoordFar.setLatitude(sphericCoordClose.getLatitude());
 
-        sphericCoordFar.setLongitude(0.0);
+        sphericCoordFar = sphericCoordFar.setLongitude(0.0);
         assertFalse(sphericCoordClose.equals(sphericCoordFar));
-        sphericCoordFar.setLongitude(sphericCoordClose.getLongitude());
+        sphericCoordFar = sphericCoordFar.setLongitude(sphericCoordClose.getLongitude());
     }
 
     /**
@@ -184,7 +184,7 @@ public class CoordinateTest {
         assertEquals(0.374166, cartCoordDefault.getDistance(cartCoordClose), tolerance);
         assertEquals(3741.978105, cartCoordClose.getDistance(cartCoordFar), tolerance);
 
-        assertEquals(sphericCoordFar.getRadius(), sphericCoordFar.getDistance(new SphericCoordinate()), tolerance);
+        assertEquals(sphericCoordFar.getRadius(), sphericCoordFar.getDistance(SphericCoordinate.getSphericCoordinate()), tolerance);
     }
 
     /**
@@ -194,8 +194,8 @@ public class CoordinateTest {
     public void testSphericDistance() throws ConversionException {
         //example from Wkipedia (https://de.wikipedia.org/wiki/Orthodrome)
         final double earthRadius = 6370.0;  //km
-        SphericCoordinate berlin = new SphericCoordinate(earthRadius, (52.517) / 180.0 * Math.PI, ((13.40 + 180.0) / 360.0) * 2 * Math.PI - Math.PI);
-        SphericCoordinate tokio = new SphericCoordinate(earthRadius, (35.70) / 180.0 * Math.PI, ((139.767 + 180.0) / 360.0) * 2 * Math.PI - Math.PI);
+        SphericCoordinate berlin = SphericCoordinate.getSphericCoordinate(earthRadius, (52.517) / 180.0 * Math.PI, ((13.40 + 180.0) / 360.0) * 2 * Math.PI - Math.PI);
+        SphericCoordinate tokio = SphericCoordinate.getSphericCoordinate(earthRadius, (35.70) / 180.0 * Math.PI, ((139.767 + 180.0) / 360.0) * 2 * Math.PI - Math.PI);
 
         double sphericDistance = berlin.getSphericDistance(tokio);
         assertEquals(sphericDistance, 8918, 2.0);
@@ -223,5 +223,17 @@ public class CoordinateTest {
         assertEquals(sphericCoordDefault.asCartesianCoordinate().asSphericCoordinate(), sphericCoordDefault);
         assertEquals(sphericCoordClose.asCartesianCoordinate().asSphericCoordinate(), sphericCoordClose);
         assertEquals(sphericCoordFar.asCartesianCoordinate().asSphericCoordinate(), sphericCoordFar);
+    }
+
+    /**
+     *
+     */
+    @Test
+    public void testObjectsShared() {
+        CartesianCoordinate copyOfCartCoordClose = CartesianCoordinate.getCartesianCoordinate(cartCoordClose.getX(), cartCoordClose.getY(), cartCoordClose.getZ());
+        assertTrue(copyOfCartCoordClose == cartCoordClose);
+
+        SphericCoordinate copyOfSphericCoordClose = SphericCoordinate.getSphericCoordinate(sphericCoordClose.getRadius(), sphericCoordClose.getLatitude(), sphericCoordClose.getLongitude());
+        assertTrue(copyOfSphericCoordClose == sphericCoordClose);
     }
 }

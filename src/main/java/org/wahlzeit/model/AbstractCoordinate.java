@@ -88,11 +88,8 @@ public abstract class AbstractCoordinate implements Coordinate {
         if (obj instanceof Coordinate) {
             try {
                 return isEqual((Coordinate) obj);
-            } catch (IllegalStateException ise) {
+            } catch (IllegalStateException | ConversionException ise) {
                 ise.printStackTrace();
-                return false;
-            } catch (ConversionException e) {
-                e.printStackTrace();
                 return false;
             }
         } else {
@@ -119,5 +116,4 @@ public abstract class AbstractCoordinate implements Coordinate {
             throw new IllegalArgumentException("Parameter coordinate must not be null!");
         }
     }
-
 }

@@ -20,37 +20,64 @@
 
 package org.wahlzeit.model;
 
-import java.nio.channels.ConnectionPendingException;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
- * This class holds a coordinate in spheric space
+ * This class holds a coordinate in spheric space.
+ * SphericCoordinate is a shared value object.
  */
 public class SphericCoordinate extends AbstractCoordinate {
 
     /**
+     * Shared object memory, stores all AbstractCoordinate value objects, so they can be reused
+     */
+    static private final HashMap<SphericCoordinate, SphericCoordinate> allSharedCoordinates = new HashMap<>();
+
+    /**
+     * Exchanges a temporarily created value Object with an equal shared value object.
+     * This method is thread safe.
+     *
+     * @param newTmpObject value object that was created and should be exchanged for equal shared value object
+     * @return the reference to the shared value object that is equal to newTmpObject
+     */
+    static protected SphericCoordinate getSharedObject(SphericCoordinate newTmpObject) {
+        synchronized (allSharedCoordinates) {
+            SphericCoordinate mappedValue = allSharedCoordinates.get(newTmpObject);
+            //there was no equal object before
+            if (mappedValue == null) {
+                allSharedCoordinates.put(newTmpObject, newTmpObject);
+                return newTmpObject;
+            } else {
+                return mappedValue;
+            }
+        }
+    }
+
+    /**
      * distance to the origin must be >= 0
      */
-    private double radius = 0.0;
+    private final double radius;
 
     /**
      * vertical angle must be between 0 and PI
      */
-    private double latitude = 0.0;
+    private final double latitude;
 
     /**
      * horizontal angle must be between -PI and +PI
      */
-    private double longitude = 0.0;
+    private final double longitude;
 
     /**
      * @param radius    distance to origin
      * @param latitude  vertical angle between 0 and PI
      * @param longitude horizontal angle between -PI and +PI
      * @throws IllegalArgumentException if one of the arguments ignores the contracts
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype constructor
      */
-    public SphericCoordinate(double radius, double latitude, double longitude) throws IllegalArgumentException {
+    private SphericCoordinate(double radius, double latitude, double longitude) throws IllegalArgumentException {
         assertPositiveRadius(radius);
         assertCorrectLatitude(latitude);
         assertCorrectLongitude(longitude);
@@ -61,20 +88,45 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
-     * Default constructor. Position is initialized to(x, y, z) = (0.0, 0.0, 0.0).
+     * Default constructor. Position is initialized to(radius, latitude, longitude) = (0.0, 0.0, 0.0).
      *
      * @throws AssertionError if class invariant was damaged
      * @methodtype constructor
      */
-    public SphericCoordinate() {
-        assertClassInvariant();
+    private SphericCoordinate() {
+        this(0.0, 0.0, 0.0);
+    }
+
+    /**
+     * Creation method returning the shared value object to a specific spheric position.
+     *
+     * @param radius    distance to origin
+     * @param latitude  vertical angle between 0 and PI
+     * @param longitude horizontal angle between -PI and +PI
+     * @throws IllegalArgumentException if one of the arguments ignores the contracts
+     * @throws AssertionError           if class invariant was damaged
+     * @methodtype creation
+     */
+    static public SphericCoordinate getSphericCoordinate(double radius, double latitude, double longitude) throws IllegalArgumentException {
+        SphericCoordinate tmpObject = new SphericCoordinate(radius, latitude, longitude);
+        return getSharedObject(tmpObject).asSphericCoordinate();
+    }
+
+    /**
+     * Creation method returning the default SphericCoordinate object. Position is set to (radius, latitude, longitude) = (0.0, 0.0, 0.0).
+     *
+     * @throws AssertionError if class invariant was damaged
+     * @methodtype creation
+     */
+    static public SphericCoordinate getSphericCoordinate() {
+        return getSphericCoordinate(0.0, 0.0, 0.0);
     }
 
     /**
      * Converts this object into cartesian coordinate system
      *
      * @throws ConversionException if conversion leads to an invalid CartesianCoordinate
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError      if class invariant was damaged
      * @methodtype conversion
      */
     @Override
@@ -86,7 +138,7 @@ public class SphericCoordinate extends AbstractCoordinate {
         double z = radius * Math.cos(latitude);
 
         try {
-            CartesianCoordinate cartesianCoordinate = new CartesianCoordinate(x, y, z);
+            CartesianCoordinate cartesianCoordinate = CartesianCoordinate.getCartesianCoordinate(x, y, z);
 
             //postcondition: reconverting the cartesianCoordinate to a SphericCoordinate should be equal to the original SphericCoordinate
             //can not use both postconditions in SpericCoordinate.asCartesianCoordinate and CartesianCoordinate.asSphericCoordinate due to endless recursion
@@ -113,12 +165,12 @@ public class SphericCoordinate extends AbstractCoordinate {
     /**
      * Compares this Coordinate with otherCoordinate.
      *
-     * @throws ConversionException if coordinate can not be converted into a SphericCoordinate
-     * @throws AssertionError if class invariant was damaged
      * @return true if otherCoordinate has the same position.
+     * @throws ConversionException if coordinate can not be converted into a SphericCoordinate
+     * @throws AssertionError      if class invariant was damaged
      */
     @Override
-    public boolean isEqual(Coordinate coordinate) throws ConversionException{
+    public boolean isEqual(Coordinate coordinate) throws ConversionException {
         assertClassInvariant();
 
         if (coordinate == null) {
@@ -136,13 +188,21 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * Usual hashCode method, but in case this coordinate can not be converted into cartesian space,
+     * it will use it's spheric coordinates for hashing. The HashMap in that case is only able to find an equal object
+     * if that object is also a SphericCoordinate.
      *
      * @throws AssertionError if class invariant was damaged
      */
     @Override
     public int hashCode() {
         assertClassInvariant();
-        return (int) (radius + latitude + longitude);
+        try {
+            return this.asCartesianCoordinate().hashCode();
+        } catch (ConversionException e) {
+            e.printStackTrace();
+            return Objects.hash(getRadius(), getLatitude(), getLongitude());
+        }
     }
 
     /**
@@ -153,15 +213,15 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @return a new shared value object with new radius but old latitude and longitude position
      * @throws IllegalArgumentException if radius < 0
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype set
      */
-    public void setRadius(double radius) {
+    public SphericCoordinate setRadius(double radius) {
         assertClassInvariant();
         assertPositiveRadius(radius);
-        this.radius = radius;
-        assertClassInvariant();
+        return getSphericCoordinate(radius, getLatitude(), getLongitude());
     }
 
     /**
@@ -172,15 +232,15 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @return a new shared value object with new latitude but old radius and longitude position
      * @throws IllegalArgumentException if latitude < 0 or latitude > +Math.PI
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype set
      */
-    public void setLatitude(double latitude) {
+    public SphericCoordinate setLatitude(double latitude) {
         assertClassInvariant();
         assertCorrectLatitude(latitude);
-        this.latitude = latitude;
-        assertClassInvariant();
+        return getSphericCoordinate(getRadius(), latitude, getLongitude());
     }
 
     /**
@@ -191,15 +251,28 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     /**
+     * @return a new shared value object with new longitude but old radius and latitude position
      * @throws IllegalArgumentException if longitude is not in range from -PI to +PI
-     * @throws AssertionError if class invariant was damaged
+     * @throws AssertionError           if class invariant was damaged
      * @methodtype set horizontal angle
      */
-    public void setLongitude(double longitude) {
+    public SphericCoordinate setLongitude(double longitude) {
         assertClassInvariant();
         assertCorrectLongitude(longitude);
-        this.longitude = longitude;
-        assertClassInvariant();
+        return getSphericCoordinate(getRadius(), getLatitude(), longitude);
+    }
+
+    /**
+     * Removes this object from the shared object memory.
+     * Therefor call this method to clear memory from this object in case this value object will never be used again.
+     * This method is thread safe.
+     *
+     * @return whether this object has been removed successfully
+     */
+    public boolean dispose() {
+        synchronized (allSharedCoordinates) {
+            return allSharedCoordinates.remove(this) == null;
+        }
     }
 
     /**
