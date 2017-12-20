@@ -20,6 +20,8 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.utils.PatternInstance;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -27,6 +29,10 @@ import java.util.Objects;
  * This class represents a coordinate in cartesian space.
  * CartesianCoordinate is a shared value object.
  */
+@PatternInstance(
+        patternName = "Flyweight",
+        participants = {"CartesianCoordinate"}
+)
 public class CartesianCoordinate extends AbstractCoordinate {
 
     /**

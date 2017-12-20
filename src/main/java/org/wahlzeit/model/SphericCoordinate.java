@@ -20,6 +20,8 @@
 
 package org.wahlzeit.model;
 
+import org.wahlzeit.utils.PatternInstance;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -27,6 +29,10 @@ import java.util.Objects;
  * This class holds a coordinate in spheric space.
  * SphericCoordinate is a shared value object.
  */
+@PatternInstance(
+        patternName = "Flyweight",
+        participants = {"SphericCoordinate"}
+)
 public class SphericCoordinate extends AbstractCoordinate {
 
     /**
