@@ -38,9 +38,11 @@ import org.wahlzeit.model.persistence.PersistenceTestSuite;
         TagsTest.class,
         UserStatusTest.class,
         ValueTest.class,
-        WatchPhotoTest.class,
+        WatchTest.class,
         WatchPhotoFactoryTest.class,
-        WatchPhotoManagerTest.class
+        WatchPhotoManagerTest.class,
+        WatchTypeTest.class,
+        WatchMangerTest.class
 })
 
 public class ModelTestSuite {

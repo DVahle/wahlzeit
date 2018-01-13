@@ -4,6 +4,9 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 import org.wahlzeit.model.*;
+import org.wahlzeit.model.mymodel.Watch;
+import org.wahlzeit.model.mymodel.WatchPhoto;
+import org.wahlzeit.model.mymodel.WatchType;
 import org.wahlzeit.model.persistence.DatastoreAdapter.ImageWrapper;
 
 /**
@@ -28,6 +31,7 @@ public class OfyService {
 		factory().register(PhotoCase.class);
 		factory().register(ImageWrapper.class);
 		factory().register(WatchPhoto.class);
+
 	}
 
 	public static Objectify ofy() {

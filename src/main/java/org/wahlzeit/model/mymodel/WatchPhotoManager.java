@@ -18,7 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.wahlzeit.model;
+package org.wahlzeit.model.mymodel;
+
+import org.wahlzeit.model.Photo;
+import org.wahlzeit.model.PhotoId;
+import org.wahlzeit.model.PhotoManager;
 
 import java.util.logging.Logger;
 

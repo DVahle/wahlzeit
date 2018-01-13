@@ -1,32 +1,16 @@
-/*
- * Copyright (c) 2017 by Daniel Vahle
- *
- * This file is part of the Wahlzeit photo rating application.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public
- * License along with this program. If not, see
- * <http://www.gnu.org/licenses/>.
- */
+package org.wahlzeit.model.mymodel;
 
-package org.wahlzeit.model;
+public class Watch {
 
-import com.googlecode.objectify.annotation.Subclass;
+    /**
+     * Manager of this object. Has no use but was modeled in UML-Classdiagram.
+     */
+    private WatchManager manager;
 
-/**
- * This class extends the Photo class and adds further attributes specifically for watches
- */
-@Subclass
-public class WatchPhoto extends Photo {
+    /**
+     * WatchType of this Watch.
+     */
+    private WatchType type;
 
     /**
      * Material of which the watches wristband is made of.
@@ -50,17 +34,9 @@ public class WatchPhoto extends Photo {
     /**
      * @methodtype constructor
      */
-    public WatchPhoto() {
-        super();
+    public Watch(WatchType type) {
+        this.type = type;
     }
-
-    /**
-     * @methodtype constructor
-     */
-    public WatchPhoto(PhotoId myId) {
-        super(myId);
-    }
-
 
     /**
      * @methodtype get
@@ -115,4 +91,13 @@ public class WatchPhoto extends Photo {
         }
         this.brand = brand;
     }
+
+
+    /**
+     * @methodtype get
+     */
+    public WatchType getType() {
+        return type;
+    }
+
 }

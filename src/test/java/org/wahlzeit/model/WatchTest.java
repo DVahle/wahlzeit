@@ -25,6 +25,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
+import org.wahlzeit.model.mymodel.Watch;
+import org.wahlzeit.model.mymodel.WatchManager;
 import org.wahlzeit.testEnvironmentProvider.LocalDatastoreServiceTestConfigProvider;
 import org.wahlzeit.testEnvironmentProvider.RegisteredOfyEnvironmentProvider;
 
@@ -34,11 +36,11 @@ import static org.junit.Assert.assertNotNull;
 /**
  * tests the WatchPhoto class
  */
-public class WatchPhotoTest {
+public class WatchTest {
 
-    private WatchPhoto photo1;
-    private WatchPhoto photo2;
-    private WatchPhoto photo3;
+    private Watch watch1;
+    private Watch watch2;
+    private Watch watch3;
 
     @ClassRule
     public static TestRule chain = RuleChain.
@@ -47,47 +49,46 @@ public class WatchPhotoTest {
 
     @Before
     public void setup() {
-        photo1 = new WatchPhoto();
-        photo2 = new WatchPhoto();
-
-        PhotoId id = new PhotoId(123);
-        photo3 = new WatchPhoto(id);
+        WatchManager manager = new WatchManager();
+        watch1 = manager.createWatch("typeA");
+        watch2 = manager.createWatch("typeB");
+        watch3 = manager.createWatch("typeC");
     }
 
     @Test
     public void testConstructors() {
-        assertNotNull(photo1);
-        assertNotNull(photo2);
-        assertNotNull(photo3);
+        assertNotNull(watch1);
+        assertNotNull(watch2);
+        assertNotNull(watch3);
     }
 
     @Test
     public void testSetterAndGetters() {
-        photo1.setBrand("Diesel");
-        assertEquals(photo1.getBrand(), "Diesel");
+        watch1.setBrand("Diesel");
+        assertEquals(watch1.getBrand(), "Diesel");
 
-        photo1.setHousingMaterial("Stainless Steel");
-        assertEquals(photo1.getHousingMaterial(), "Stainless Steel");
+        watch1.setHousingMaterial("Stainless Steel");
+        assertEquals(watch1.getHousingMaterial(), "Stainless Steel");
 
-        photo1.setWristBandMaterial("Leather");
-        assertEquals(photo1.getWristBandMaterial(), "Leather");
+        watch1.setWristBandMaterial("Leather");
+        assertEquals(watch1.getWristBandMaterial(), "Leather");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEvilParametersBrand() {
-        photo1.setBrand("Diesel");
-        photo1.setBrand(null);
+        watch1.setBrand("Diesel");
+        watch1.setBrand(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEvilParametersHousingMaterial() {
-        photo2.setHousingMaterial(null);
+        watch2.setHousingMaterial(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEvilParametersWristBandMaterial() {
-        photo3.setWristBandMaterial("Leather");
-        photo3.setWristBandMaterial(null);
+        watch3.setWristBandMaterial("Leather");
+        watch3.setWristBandMaterial(null);
     }
 
 }

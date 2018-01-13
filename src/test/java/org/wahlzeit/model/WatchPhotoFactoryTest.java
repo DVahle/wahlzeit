@@ -25,6 +25,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
+import org.wahlzeit.model.mymodel.WatchPhoto;
+import org.wahlzeit.model.mymodel.WatchPhotoFactory;
 import org.wahlzeit.testEnvironmentProvider.LocalDatastoreServiceTestConfigProvider;
 import org.wahlzeit.testEnvironmentProvider.RegisteredOfyEnvironmentProvider;
 

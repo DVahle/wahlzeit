@@ -21,6 +21,7 @@
 package org.wahlzeit.main;
 
 import org.wahlzeit.model.*;
+import org.wahlzeit.model.mymodel.WatchPhotoFactory;
 import org.wahlzeit.model.persistence.DatastoreAdapter;
 import org.wahlzeit.model.persistence.ImageStorage;
 import org.wahlzeit.services.LogBuilder;
